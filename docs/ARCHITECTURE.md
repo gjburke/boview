@@ -33,7 +33,7 @@ The stages of the pipeline are as follows:
     1. Feature extraction
     2. Weight prediction
 
-Each stage will be separated into its own part of the package, and you'll be able to step through each age by itself.
+Each stage will be separated into its own part of the package, and you'll be able to step through each stage by itself.
 
 # Tools
 
