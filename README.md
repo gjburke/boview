@@ -16,7 +16,7 @@ python -m venv .venv
 ...and installing the requirements
 
 ```
-python -m pip install e ".[dev]"
+python -m pip install -e ".[dev]"
 ```
 
 ## Testing
