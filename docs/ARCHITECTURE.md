@@ -37,4 +37,9 @@ Each stage will be separated into its own part of the package, and you'll be abl
 
 # Tools
 
+Running list of possible tools:
+
 # Visualization
+
+Running list of visualizations:
+- Color and depth images after each load
