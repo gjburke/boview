@@ -10,10 +10,20 @@ Set up the project with:
 
 ```
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
 ```
 
-...and installing the requirements
+and then 
+
+```
+.\.venv\Scripts\Activate.ps1
+```
+on Windows, or
+```
+source ./.venv/bin/activate
+```
+on Mac.
+
+And for installing the requirements:
 
 ```
 python -m pip install -e ".[dev]"
