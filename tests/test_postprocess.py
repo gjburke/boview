@@ -2,7 +2,11 @@
 
 import numpy as np
 
-from boview.pipeline.postprocess.filter import get_mask_iou, get_percentage_zero
+from boview.pipeline.postprocess.filter import (
+    get_mask_iou,
+    get_percentage_zero,
+    is_filtered,
+)
 
 # Filtering
 
@@ -35,5 +39,29 @@ def test_get_mask_iou():
         )
 
 
-def test_filtering():
-    assert len(np.array([0]) == 0)
+def test_is_filtered():
+    frames = [
+        np.array([0, 0]),
+        np.array([1, 1]),
+        np.array([1, 0]),
+    ]
+    mask_pairs = [
+        (np.array([True, True]), np.array([True, False])),
+        (np.array([False, True]), np.array([True, True])),
+        (np.array([True, False]), np.array([True, False])),
+    ]
+    max_percentage_zero = 50
+    min_iou = 0.75
+
+    expecteds = [True, True, False]
+
+    for frame, (mask1, mask2), expected in zip(frames, mask_pairs, expecteds):
+        filtered = is_filtered(
+            height_frame=frame,
+            color_frame=None,
+            height_mask=mask1,
+            color_mask=mask2,
+            max_percentage_zero=max_percentage_zero,
+            min_iou=min_iou,
+        )
+        assert filtered == expected

@@ -1,3 +1,5 @@
 """Planned filtering, smoothing, interpolation, and rotation."""
 
-__all__ = []
+from .filter import is_filtered
+
+__all__ = ["is_filtered"]
