@@ -36,5 +36,11 @@ def get_mask_iou(mask1: np.ndarray[np.bool], mask2: np.ndarray[np.bool]) -> np.f
     Returns:
     - iou: the intersection over union of the True values
     """
+    assert mask1.shape == mask2.shape
 
-    return 0
+    overlap_count = np.sum(np.bitwise_and(mask1, mask2))
+    total_count = np.sum(np.bitwise_or(mask1, mask2))
+    assert total_count > 0
+
+    iou = overlap_count / total_count
+    return iou
