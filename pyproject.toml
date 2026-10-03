@@ -10,7 +10,8 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "numpy",
-    "opencv-python"
+    "opencv-python",
+    "scikit-image"
 ]
 
 [project.optional-dependencies]

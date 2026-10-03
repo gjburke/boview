@@ -7,6 +7,7 @@ from boview.pipeline.postprocess.filter import (
     get_percentage_zero,
     is_filtered,
 )
+from boview.pipeline.postprocess.rotate import get_rotation_matrix
 
 # Filtering
 
@@ -65,3 +66,27 @@ def test_is_filtered():
             min_iou=min_iou,
         )
         assert filtered == expected
+
+
+# Rotation
+
+
+def test_get_rotation_matrix():
+    masks = [
+        np.array([[False, False, True], [False, True, False], [False, False, False]]),
+        np.array([[False, False, True], [False, True, False], [True, False, False]]),
+        np.array([[False, True, False], [False, True, False], [False, True, False]]),
+    ]
+    rads = [np.deg2rad(-45), np.deg2rad(-45), np.deg2rad(-90)]
+    centers = [(1.5, 0.5), (1, 1), (1, 1)]
+
+    for mask, rad, (cx, cy) in zip(masks, rads, centers):
+        expected = np.array(
+            [
+                [np.cos(rad), np.sin(rad), (1 - np.cos(rad)) * cx - np.sin(rad) * cy],
+                [-np.sin(rad), np.cos(rad), np.sin(rad) * cx + (1 - np.cos(rad)) * cy],
+            ]
+        )
+
+        result = get_rotation_matrix(mask)
+        np.testing.assert_allclose(result, expected, rtol=1e-6, atol=1e-7)
