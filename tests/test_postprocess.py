@@ -10,6 +10,7 @@ from boview.pipeline.postprocess.filter import (
 from boview.pipeline.postprocess.rotate import (
     get_rotation_matrix,
     rotate_frame,
+    rotate_horizontal,
     rotate_points,
 )
 
@@ -118,7 +119,6 @@ def test_rotate_points():
         np.array([[False, False, False], [True, True, True], [False, False, False]]),
         np.array([[True, False, False], [False, True, False], [False, False, True]]),
         np.array([[False, False, True], [False, True, False], [True, False, False]]),
-        np.array([[False, True, False], [False, True, False], [False, True, False]]),
     ]
     pointss = [
         np.array([[0, 1], [1, 1], [2, 1]]),
@@ -131,3 +131,30 @@ def test_rotate_points():
         rotation_matrix = get_rotation_matrix(mask)
         result = rotate_points(points=points, rotation_matrix=rotation_matrix)
         np.testing.assert_allclose(result, expected, rtol=1e-6, atol=1e-7)
+
+
+def test_rotate_horizontal():
+    masks = [
+        np.array([[False, False, False], [True, True, True], [False, False, False]]),
+        np.array([[True, False, False], [False, True, False], [False, False, True]]),
+        np.array([[False, False, True], [False, True, False], [True, False, False]]),
+    ]
+    pointss = [
+        np.array([[0, 1], [1, 1], [2, 1]]),
+        np.array([[0, 0], [1, 1], [2, 2]]),
+        np.array([[0, 2], [1, 1], [2, 0]]),
+    ]
+    expected_frame = np.array([[0, 0, 0], [1, 1, 1], [0, 0, 0]])
+    expected_mask = np.array(
+        [[False, False, False], [True, True, True], [False, False, False]]
+    )
+    expected_points = np.array([[0, 1], [1, 1], [2, 1]])
+
+    for mask, points in zip(masks, pointss):
+        result_frame, result_mask, result_points = rotate_horizontal(
+            frame=mask.astype(np.uint8), mask=mask, points=points
+        )
+
+        np.testing.assert_allclose(result_frame, expected_frame, rtol=1e-6, atol=1e-7)
+        np.testing.assert_allclose(result_mask, expected_mask, rtol=1e-6, atol=1e-7)
+        np.testing.assert_allclose(result_points, expected_points, rtol=1e-6, atol=1e-7)

@@ -66,3 +66,32 @@ def rotate_points(points: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray
     points_rotated = np.round(points_rotated).astype(int)
 
     return points_rotated
+
+
+def rotate_horizontal(
+    frame: np.ndarray,
+    mask: np.ndarray[np.bool],
+    points: np.ndarray,
+) -> (np.ndarray, np.ndarray, np.ndarray):
+    """
+    Rotates the frame, points, and mask to horizontal
+
+    Parameters:
+    - frame: a HxW(x...) frame to rotate
+    - points: an (N, 2) array of (x, y) points
+    - mask: the HxW boolean segmentation mask for that particular image
+
+    Returns:
+    - frame_rotated: HxW input frame rotated to horizontal
+    - mask_rotated: HxW mask rotated to horizontal
+    - points_rotated: (N, 2) (x, y) points rotated to horizonal
+    """
+    rotation_matrix = get_rotation_matrix(mask=mask)
+
+    frame_rotated = rotate_frame(frame=frame, rotation_matrix=rotation_matrix)
+    mask_rotated = rotate_frame(
+        frame=mask.astype(np.uint8), rotation_matrix=rotation_matrix
+    ).astype(np.bool)
+    points_rotated = rotate_points(points=points, rotation_matrix=rotation_matrix)
+
+    return (frame_rotated, mask_rotated, points_rotated)
