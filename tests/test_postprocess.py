@@ -7,7 +7,7 @@ from boview.pipeline.postprocess.filter import (
     get_percentage_zero,
     is_filtered,
 )
-from boview.pipeline.postprocess.rotate import get_rotation_matrix
+from boview.pipeline.postprocess.rotate import get_rotation_matrix, rotate_frame
 
 # Filtering
 
@@ -88,5 +88,22 @@ def test_get_rotation_matrix():
             ]
         )
 
-        result = get_rotation_matrix(mask)
+        result = get_rotation_matrix(mask=mask)
+        np.testing.assert_allclose(result, expected, rtol=1e-6, atol=1e-7)
+
+
+def test_rotate_frame():
+    masks = [
+        np.array([[False, False, False], [True, True, True], [False, False, False]]),
+        np.array([[True, False, False], [False, True, False], [False, False, True]]),
+        np.array([[False, False, True], [False, True, False], [True, False, False]]),
+        np.array([[False, True, False], [False, True, False], [False, True, False]]),
+    ]
+    expected = np.array([[0, 0, 0], [1, 1, 1], [0, 0, 0]])
+
+    for mask in masks:
+        rotation_matrix = get_rotation_matrix(mask)
+        result = rotate_frame(
+            frame=mask.astype(np.uint8), rotation_matrix=rotation_matrix
+        )
         np.testing.assert_allclose(result, expected, rtol=1e-6, atol=1e-7)

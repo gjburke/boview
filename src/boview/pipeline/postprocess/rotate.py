@@ -24,3 +24,25 @@ def get_rotation_matrix(mask: np.ndarray[np.bool]) -> np.ndarray:
 
     rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
     return rotation_matrix
+
+
+def rotate_frame(frame: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
+    """
+    Rotates a HxW frame, interpolating pixels when needed and keeping a hard edge
+
+    Parameters:
+    - frame: a HxW(x...) frame to rotate
+    - rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
+
+    Returns:
+    - frame_rotated: a HxW(x...) rotated frame
+    """
+    frame_rotated = cv2.warpAffine(
+        frame,
+        rotation_matrix,
+        (frame.shape[1], frame.shape[0]),
+        flags=cv2.INTER_NEAREST,
+        borderMode=cv2.BORDER_CONSTANT,
+        borderValue=0,
+    )
+    return frame_rotated
