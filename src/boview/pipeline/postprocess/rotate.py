@@ -46,3 +46,23 @@ def rotate_frame(frame: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
         borderValue=0,
     )
     return frame_rotated
+
+
+def rotate_points(points: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
+    """
+    Rotates a set of (N, 2) points in (x, y) format and rounds to nearest pixel
+
+    Parameters:
+    - points: an (N, 2) array of (x, y) points
+    - rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
+
+    Returns:
+    - points_rotated: an (N, 2) array of rotated (x, y) points
+    """
+    points_rotated = cv2.transform(
+        points[:, :2].reshape(-1, 1, 2),
+        rotation_matrix,
+    ).reshape(-1, 2)
+    points_rotated = np.round(points_rotated).astype(int)
+
+    return points_rotated
