@@ -13,6 +13,7 @@ from boview.pipeline.postprocess.rotate import (
     rotate_horizontal,
     rotate_points,
 )
+from boview.pipeline.postprocess.smoothing import clean_mask
 from boview.pipeline.postprocess.utils import mask_frame
 
 # Filtering
@@ -159,6 +160,67 @@ def test_rotate_horizontal():
         np.testing.assert_allclose(result_frame, expected_frame, rtol=1e-6, atol=1e-7)
         np.testing.assert_allclose(result_mask, expected_mask, rtol=1e-6, atol=1e-7)
         np.testing.assert_allclose(result_points, expected_points, rtol=1e-6, atol=1e-7)
+
+
+# Smoothing
+
+
+def box_mask(shape, boxes):
+    mask = np.zeros(shape, dtype=bool)
+    for r0, r1, c0, c1 in boxes:
+        mask[r0:r1, c0:c1] = True
+    return mask
+
+
+def test_clean_mask():
+    # Handles empty mask
+    mask = np.array([[False, False], [False, False]])
+    expected = np.array([[False, False], [False, False]])
+
+    result = clean_mask(mask)
+    np.testing.assert_array_equal(result, expected)
+
+    # Takes larger mask
+    mask = box_mask(
+        shape=(300, 400),
+        boxes=[
+            (30, 150, 30, 150),
+            (200, 250, 300, 350),
+        ],
+    )
+    expected = box_mask(
+        shape=(300, 400),
+        boxes=[
+            (30, 150, 30, 150),
+        ],
+    )
+
+    cleaned_mask = clean_mask(mask)
+    cleaned_expected = clean_mask(expected)
+
+    assert np.any(cleaned_mask)
+    assert np.sum(cleaned_mask) > 14000 and np.sum(cleaned_mask) < 15000
+    np.testing.assert_array_equal(cleaned_mask, cleaned_expected)
+
+    # Fills hole
+    mask = box_mask(
+        shape=(300, 400),
+        boxes=[
+            (30, 150, 30, 150),
+        ],
+    )
+    mask[70:120, 90:130] = False
+    expected = box_mask(
+        shape=(300, 400),
+        boxes=[
+            (30, 150, 30, 150),
+        ],
+    )
+
+    cleaned_mask = clean_mask(mask)
+    cleaned_expected = clean_mask(expected)
+
+    np.testing.assert_array_equal(cleaned_mask, cleaned_expected)
 
 
 # Utils
