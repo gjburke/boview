@@ -13,6 +13,7 @@ from boview.pipeline.postprocess.rotate import (
     rotate_horizontal,
     rotate_points,
 )
+from boview.pipeline.postprocess.utils import mask_frame
 
 # Filtering
 
@@ -158,3 +159,28 @@ def test_rotate_horizontal():
         np.testing.assert_allclose(result_frame, expected_frame, rtol=1e-6, atol=1e-7)
         np.testing.assert_allclose(result_mask, expected_mask, rtol=1e-6, atol=1e-7)
         np.testing.assert_allclose(result_points, expected_points, rtol=1e-6, atol=1e-7)
+
+
+# Utils
+
+
+def test_mask_frame():
+    masks = [
+        np.array([[False, False], [False, False]]),
+        np.array([[True, False], [False, True]]),
+        np.array([[True, True], [True, True]]),
+    ]
+    frames = [
+        np.array([[1, 0], [0, 1]]),
+        np.array([[1, 0], [1, 0]]),
+        np.array([[0, 1], [1, 0]]),
+    ]
+    expecteds = [
+        np.array([[0, 0], [0, 0]]),
+        np.array([[1, 0], [0, 0]]),
+        np.array([[0, 1], [1, 0]]),
+    ]
+
+    for mask, frame, expected in zip(masks, frames, expecteds):
+        result = mask_frame(frame=frame, mask=mask)
+        np.testing.assert_allclose(result, expected, rtol=1e-6, atol=1e-7)
