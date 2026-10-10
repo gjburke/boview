@@ -169,16 +169,19 @@ def test_mask_frame():
         np.array([[False, False], [False, False]]),
         np.array([[True, False], [False, True]]),
         np.array([[True, True], [True, True]]),
+        np.array([[True, False], [False, True]]),
     ]
     frames = [
         np.array([[1, 0], [0, 1]]),
         np.array([[1, 0], [1, 0]]),
         np.array([[0, 1], [1, 0]]),
+        np.array([[[1, 1], [0, 0]], [[1, 1], [0, 0]]]),
     ]
     expecteds = [
         np.array([[0, 0], [0, 0]]),
         np.array([[1, 0], [0, 0]]),
         np.array([[0, 1], [1, 0]]),
+        np.array([[[1, 1], [0, 0]], [[0, 0], [0, 0]]]),
     ]
 
     for mask, frame, expected in zip(masks, frames, expecteds):
