@@ -1,1 +1,1 @@
-"""Planned segmentation and keypoint model integration."""
+"""Segmentation and keypoint inference using Ultralytics models."""
