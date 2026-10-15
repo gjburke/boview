@@ -7,13 +7,13 @@ from boview.pipeline.postprocess.filter import (
     get_percentage_zero,
     is_filtered,
 )
+from boview.pipeline.postprocess.refine import clean_mask, interpolate_height
 from boview.pipeline.postprocess.rotate import (
     get_rotation_matrix,
     rotate_frame,
     rotate_horizontal,
     rotate_points,
 )
-from boview.pipeline.postprocess.smoothing import clean_mask
 from boview.pipeline.postprocess.utils import mask_frame
 
 # Filtering
@@ -221,6 +221,22 @@ def test_clean_mask():
     cleaned_expected = clean_mask(expected)
 
     np.testing.assert_array_equal(cleaned_mask, cleaned_expected)
+
+
+def test_interpolate_height():
+    mask = box_mask(
+        shape=(300, 400),
+        boxes=[
+            (30, 150, 30, 150),
+        ],
+    )
+    height = mask.astype(np.uint16)
+    height[70:90, 90:93] = 0
+    expected = mask.astype(np.uint16)
+
+    result_frame, result_mask = interpolate_height(frame=height, mask=mask)
+    assert get_mask_iou((result_frame > 0), (expected > 0)) > 0.99
+    assert get_mask_iou(result_mask, (expected > 0)) > 0.99
 
 
 # Utils
