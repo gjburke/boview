@@ -12,6 +12,7 @@ dependencies = [
     "numpy",
     "opencv-python",
     "scikit-image",
+    "ultralytics>=8.3,<9",
     "joblib",
     "pandas",
     "scikit-learn",
