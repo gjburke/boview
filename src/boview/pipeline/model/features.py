@@ -322,7 +322,7 @@ def get_features(
     height_frame: np.ndarray, mask: np.ndarray, keypoints: np.ndarray, fl: float
 ) -> dict:
     """
-    Extracts the notebook's body measurements from aligned, postprocessed inputs
+    Extracts the 20 model inputs from aligned, postprocessed inputs
 
     Parameters:
     - height_frame: HxW height frame in millimeters, rotated to horizontal
@@ -331,10 +331,10 @@ def get_features(
     - fl: camera height above the floor in millimeters
 
     Returns:
-    - features: notebook-named measurements; lengths in pixels, heights in centimeters,
-      Z and FL in millimeters, dorsal area in square pixels, volume in square pixels
-      times centimeters, and surface area and circumferences in calibration units;
-      unavailable hip and circumference measurements use -1 and missing columns use None
+    - features: 10 original measurements followed by their 10 transformed counterparts
+      in model input order, using Z = FL - AvgHeight * 10 in millimeters;
+      suffixed names preserve the notebook's transformations, including scaling
+      heights already in centimeters; statistical normalization is not applied
     """
     mask = mask.astype(bool)
     height = height_frame
@@ -348,7 +348,8 @@ def get_features(
     circumference, col = get_comp_max_tot_vertical_max_column(height, mask, fl)
     top_hip, bottom_hip = get_hip_heights(height, keypoints)
 
-    return {
+    # Original measurements, including extras available for further analysis
+    measurements = {
         "Length": get_length(mask),
         "Width": get_width(mask),
         "DorsalArea": dorsal_area,
@@ -369,3 +370,34 @@ def get_features(
         "BottomHipHeight": bottom_hip,
         "FL": fl,
     }
+
+    # Distance-based conversions using average height converted to millimeters
+    z = measurements["Z"]
+    length_factor = 0.143 * (z / 1000) ** 0.862
+    area_factor = 0.023 * (z / 1000) ** 1.866
+
+    # Model inputs in the same order as the modelling notebook
+    features = {
+        "Length": measurements["Length"],
+        "Width": measurements["Width"],
+        "DorsalArea": measurements["DorsalArea"],
+        "Volume": measurements["Volume"],
+        "CentroidHeight": measurements["CentroidHeight"],
+        "MaxHeight": measurements["MaxHeight"],
+        "AvgHeight": measurements["AvgHeight"],
+        "SurfaceArea": measurements["SurfaceArea"],
+        "HipWidth": measurements["HipWidth"],
+        "AverageHipHeight": measurements["AverageHipHeight"],
+        "Length_cm": measurements["Length"] * length_factor,
+        "Width_cm": measurements["Width"] * length_factor,
+        "DorsalArea_cm2": measurements["DorsalArea"] * area_factor,
+        "Volume_cm3": measurements["Volume"] * area_factor,
+        "CentroidHeight_cm": measurements["CentroidHeight"] * length_factor,
+        "MaxHeight_cm": measurements["MaxHeight"] * length_factor,
+        "AvgHeight_cm": measurements["AvgHeight"] * length_factor,
+        "SurfaceArea_cm2": measurements["SurfaceArea"] * area_factor,
+        "HipWidth_cm": measurements["HipWidth"] * length_factor,
+        "AverageHipHeight_cm": measurements["AverageHipHeight"] * length_factor,
+    }
+
+    return features
