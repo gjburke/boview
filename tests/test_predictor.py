@@ -14,6 +14,7 @@ from boview.pipeline.model import load_weight_model, predict_weight
 def test_saved_pipeline_prediction(tmp_path):
     frame = pd.DataFrame({"Length": [1, 2, 3, 4], "Width": [3, 1, 4, 2]})
     target = 10 * frame["Length"] + 2 * frame["Width"]
+
     model = Pipeline(
         [
             ("scaler", StandardScaler()),
@@ -22,6 +23,7 @@ def test_saved_pipeline_prediction(tmp_path):
         ]
     )
     model.fit(frame, target)
+
     path = tmp_path / "weight_pipeline.joblib"
     joblib.dump(model, path)
 
@@ -29,5 +31,6 @@ def test_saved_pipeline_prediction(tmp_path):
 
     # Dictionary order must not swap the inputs passed to the fitted scaler
     assert predict_weight(loaded, {"Width": 5, "Length": 6}) == pytest.approx(70)
+
     with pytest.raises(KeyError):
         predict_weight(loaded, {"Length": 6})

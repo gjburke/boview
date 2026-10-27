@@ -1,6 +1,10 @@
 """Functions for filtering out low-quality frames"""
 
+from dataclasses import replace
+
 import numpy as np
+
+from ..frame import PipelineFrame, reject_frame, require_stage
 
 
 def get_percentage_zero(frame: np.ndarray, mask: np.ndarray[np.bool]) -> np.float64:
@@ -77,3 +81,45 @@ def is_filtered(
         return True
 
     return False
+
+
+def filter_frame(
+    frame: PipelineFrame, min_iou: float = 0.90, max_percentage_zero: float = 2.0
+) -> PipelineFrame:
+    """
+    Checks segmentation quality before cleanup without changing the input
+
+    Parameters:
+    - frame: pending segmented frame with raw height and original boolean masks
+    - min_iou: minimum accepted overlap between 0 and 1
+    - max_percentage_zero: maximum missing-height percentage between 0 and 100
+
+    Returns:
+    - filtered: new frame with quality measurements and a rejection reason if
+      either threshold fails; equality with a threshold is accepted
+
+    Raises:
+    - ValueError: invalid thresholds or stage order
+    """
+    require_stage(frame, "segment")
+
+    if not 0 <= min_iou <= 1 or not 0 <= max_percentage_zero <= 100:
+        raise ValueError("min_iou must be 0 to 1 and max_percentage_zero 0 to 100")
+
+    mask_iou = get_mask_iou(frame.color_mask, frame.height_mask)
+    percentage_zero = get_percentage_zero(frame.height_frame, frame.height_mask)
+    filtered = replace(
+        frame,
+        mask_iou=float(mask_iou),
+        percentage_zero=float(percentage_zero),
+        stage="filter",
+    )
+
+    if mask_iou < min_iou:
+        return reject_frame(filtered, "filter", "Mask overlap is below min_iou")
+    if percentage_zero > max_percentage_zero:
+        return reject_frame(
+            filtered, "filter", "Missing height exceeds max_percentage_zero"
+        )
+
+    return filtered

@@ -39,15 +39,18 @@ def test_model_features():
         "HipWidth_cm",
         "AverageHipHeight_cm",
     ]
+
     assert features["Length"] == 6
     assert features["Width"] == 4
     assert features["DorsalArea"] == 24
     assert features["Volume"] == 2400
     assert features["AvgHeight"] == 100
     assert features["HipWidth"] == 3
+
     assert features["Length_cm"] == pytest.approx(0.858)
     assert features["DorsalArea_cm2"] == pytest.approx(0.552)
     assert features["Volume_cm3"] == pytest.approx(55.2)
+
     for name in (
         "CentroidHeight_cm",
         "MaxHeight_cm",
@@ -58,6 +61,7 @@ def test_model_features():
 
     # Changing camera height changes the conversion factors, not raw measurements
     farther = get_features(height, mask, keypoints, fl=3000.0)
+
     assert farther["Length"] == features["Length"]
     assert farther["Length_cm"] == pytest.approx(0.858 * 2**0.862)
     assert farther["Volume_cm3"] == pytest.approx(55.2 * 2**1.866)
