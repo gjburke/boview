@@ -29,5 +29,11 @@ for path in sorted(PIPELINE.rglob("*.py")):
     with mkdocs_gen_files.open(output_path.as_posix(), "w") as page:
         page.write(f"# {module}\n\n::: {module}\n")
 
+with mkdocs_gen_files.open("pipeline/reference/index.md", "w") as index:
+    index.write("# Pipeline API reference\n\n")
+    index.writelines(nav.build_literate_nav())
+
+nav["Overview"] = "index.md"
+
 with mkdocs_gen_files.open("pipeline/reference/SUMMARY.md", "w") as summary:
     summary.writelines(nav.build_literate_nav())

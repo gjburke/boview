@@ -62,16 +62,16 @@ python -m ruff format --check .
 
 ## Documentation
 
-We use MkDocs and mkdocstrings[python] for our documentation.
+We use ProsperDocs (Continuation of version 1x MkDocs) and mkdocstrings[python] for our documentation.
 
 To launch the documentation from the repo root:
 
 ```
-python -m mkdocs serve
+python -m properdocs serve
 ```
 
 And to generate a finished website, checking for build warnings:
 
 ```
-python -m mkdocs build --strict
+python -m properdocs build --strict
 ```

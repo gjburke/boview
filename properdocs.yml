@@ -1,5 +1,8 @@
 site_name: BoView
 
+theme:
+  name: mkdocs
+
 nav:
 - Home: index.md
 - Overview: OVERVIEW.md
