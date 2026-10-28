@@ -1,0 +1,39 @@
+site_name: BoView
+
+nav:
+- Home: index.md
+- Overview: OVERVIEW.md
+- Pipeline:
+  - API Reference: pipeline/reference/
+
+plugins:
+  - search
+
+  - gen-files:
+      scripts:
+        - scripts/gen_reference.py
+
+  - literate-nav:
+      nav_file: SUMMARY.md
+
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            allow_inspection: false
+            show_root_heading: true
+            show_source: false
+            separate_signature: true
+            show_signature_annotations: true
+            members_order: source
+
+watch:
+  - src
+
+markdown_extensions:
+  - fenced_code
+  - tables
+  - toc:
+      permalink: true

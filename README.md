@@ -25,9 +25,17 @@ on Mac.
 
 And for installing the requirements:
 
+Regular use
+```
+python -m pip install .
+```
+
+Development
 ```
 python -m pip install -e ".[dev]"
 ```
+
+Or instead of ".", you can also add extras ".[dev,docs]"
 
 ## Testing
 
@@ -52,3 +60,18 @@ python -m ruff check .
 python -m ruff format --check .
 ```
 
+## Documentation
+
+We use MkDocs and mkdocstrings[python] for our documentation.
+
+To launch the documentation from the repo root:
+
+```
+python -m mkdocs serve
+```
+
+And to generate a finished website, checking for build warnings:
+
+```
+python -m mkdocs build --strict
+```
