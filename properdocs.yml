@@ -1,4 +1,5 @@
 site_name: BoView
+site_url: https://YOUR-OWNER.github.io/boview/
 
 theme:
   name: mkdocs
