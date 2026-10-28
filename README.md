@@ -2,7 +2,7 @@
 
 BOvine VIsion for Estimating Weight
 
-Documentation can be found at [gjburke.github.io/boview](https://gjburke.github.io/boview/pipeline/reference/)
+Documentation can be found at [gjburke.github.io/boview](https://gjburke.github.io/boview/){:target="_blank"}
 
 ## Setup
 
