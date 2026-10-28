@@ -37,9 +37,22 @@ Each stage will be separated into its own part of the package, and you'll be abl
 
 # Tools
 
-Running list of possible tools:
+Our tool set will include:
+
+1. Dataset Tools
+    - Convert depth image to normalized height
+    - Dataset combining, splitting into train/val/test
+
+2. Basic YOLO Fine-Tuning
+    - Select the model path, training params
+    - Select the dataset folders to be utilized
+    - Output is the tuned model and parameter summary
+
+3. Pipeline Eval
+    - Select inputs (labelled or unlabelled)
+    - Returns timings, benchmarks, filterings through each step of the pipeline
 
 # Visualization
 
 Running list of visualizations:
-- Color and depth images after each load
+- Color and depth images after each stage
