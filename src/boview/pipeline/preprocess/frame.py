@@ -9,19 +9,18 @@ from .height import depth_to_height
 def preprocess_frame(
     color_frame: np.ndarray, depth_frame: np.ndarray, camera_height: float
 ) -> PipelineFrame:
-    """
-    Validates the original images and calculates height without changing the input
+    """Validates the original images and calculates height without changing the input
 
-    Parameters:
-    - color_frame: HxWx3 uint8 RGB image
-    - depth_frame: aligned HxW depth image in millimeters, zero where missing
-    - camera_height: positive camera height above the floor in millimeters
+    Args:
+        color_frame: HxWx3 uint8 RGB image
+        depth_frame: aligned HxW depth image in millimeters, zero where missing
+        camera_height: positive camera height above the floor in millimeters
 
     Returns:
-    - processed: new preprocessed frame, or rejected frame for constant height
+        processed: new preprocessed frame, or rejected frame for constant height
 
     Raises:
-    - ValueError: invalid image shapes, values, camera height
+        ValueError: invalid image shapes, values, camera height
     """
     color = color_frame
     depth = depth_frame

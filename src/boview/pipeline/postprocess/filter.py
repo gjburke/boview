@@ -8,15 +8,14 @@ from ..frame import PipelineFrame, reject_frame, require_stage
 
 
 def get_percentage_zero(frame: np.ndarray, mask: np.ndarray[np.bool]) -> np.float64:
-    """
-    Finds the percentage of "zero" pixels (with no data) within a masked frame
+    """Finds the percentage of "zero" pixels (with no data) within a masked frame
 
-    Parameters:
-    - frame: a HxW frame of height values
-    - mask: a HxW boolean array, True where the mask is, False where it isn't
+    Args:
+        frame: a HxW frame of height values
+        mask: a HxW boolean array, True where the mask is, False where it isn't
 
     Returns:
-    - percentage_zero: percentage of the values that are zero within the mask
+        percentage_zero: percentage of the values that are zero within the mask
     """
     assert frame.shape == mask.shape
 
@@ -30,15 +29,14 @@ def get_percentage_zero(frame: np.ndarray, mask: np.ndarray[np.bool]) -> np.floa
 
 
 def get_mask_iou(mask1: np.ndarray[np.bool], mask2: np.ndarray[np.bool]) -> np.float64:
-    """
-    Find the IOU between two masks
+    """Find the IOU between two masks
 
-    Parameters:
-    - mask1: a HxW boolean array
-    - mask2: a HxW boolean array
+    Args:
+        mask1: a HxW boolean array
+        mask2: a HxW boolean array
 
     Returns:
-    - iou: the intersection over union of the True values
+        iou: the intersection over union of the True values
     """
     assert mask1.shape == mask2.shape
 
@@ -58,19 +56,18 @@ def is_filtered(
     max_percentage_zero: np.float64,
     min_iou: np.float64,
 ) -> bool:
-    """
-    Takes relevant frames, masks, and cutoffs to determine if the frames should be filtered out
+    """Takes relevant frames, masks, and cutoffs to determine if the frames should be filtered out
 
-    Parameters:
-    - height_frame: HxW frame of height values
-    - color_frame: HxWx3 frame of RGB color values
-    - height_mask: HxW boolean mask from height segmentation
-    - color_mask: HxW boolean mask from color segmentation
-    - max_percentage_zero: the maximum allowed percentage zero
-    - min_iou: the minimum allowed Intersection Over Union for a frame
+    Args:
+        height_frame: HxW frame of height values
+        color_frame: HxWx3 frame of RGB color values
+        height_mask: HxW boolean mask from height segmentation
+        color_mask: HxW boolean mask from color segmentation
+        max_percentage_zero: the maximum allowed percentage zero
+        min_iou: the minimum allowed Intersection Over Union for a frame
 
     Returns:
-    - filtered: true if it should be filtered, false if it sohuld pass the filter
+        filtered: true if it should be filtered, false if it sohuld pass the filter
     """
     percentage_zero = get_percentage_zero(frame=height_frame, mask=height_mask)
     if percentage_zero > max_percentage_zero:
@@ -86,20 +83,19 @@ def is_filtered(
 def filter_frame(
     frame: PipelineFrame, min_iou: float = 0.90, max_percentage_zero: float = 2.0
 ) -> PipelineFrame:
-    """
-    Checks segmentation quality before cleanup without changing the input
+    """Checks segmentation quality before cleanup without changing the input
 
-    Parameters:
-    - frame: pending segmented frame with raw height and original boolean masks
-    - min_iou: minimum accepted overlap between 0 and 1
-    - max_percentage_zero: maximum missing-height percentage between 0 and 100
+    Args:
+        frame: pending segmented frame with raw height and original boolean masks
+        min_iou: minimum accepted overlap between 0 and 1
+        max_percentage_zero: maximum missing-height percentage between 0 and 100
 
     Returns:
-    - filtered: new frame with quality measurements and a rejection reason if
-      either threshold fails; equality with a threshold is accepted
+        filtered: new frame with quality measurements and a rejection reason if
+            either threshold fails; equality with a threshold is accepted
 
     Raises:
-    - ValueError: invalid thresholds or stage order
+        ValueError: invalid thresholds or stage order
     """
     require_stage(frame, "segment")
 

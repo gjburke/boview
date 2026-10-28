@@ -6,15 +6,14 @@ import numpy as np
 
 
 def matlab_round(x: float, decimals: int = 0) -> float:
-    """
-    Rounds a value to the nearest decimal, with ties away from zero
+    """Rounds a value to the nearest decimal, with ties away from zero
 
-    Parameters:
-    - x: value to round
-    - decimals: number of decimal places
+    Args:
+        x: value to round
+        decimals: number of decimal places
 
     Returns:
-    - rounded: rounded value
+        rounded: rounded value
     """
     multiplier = 10**decimals
 
@@ -22,107 +21,99 @@ def matlab_round(x: float, decimals: int = 0) -> float:
 
 
 def get_length(mask: np.ndarray) -> np.integer:
-    """
-    Finds the greatest number of foreground pixels in a row
+    """Finds the greatest number of foreground pixels in a row
 
-    Parameters:
-    - mask: HxW mask of an animal rotated to horizontal
+    Args:
+        mask: HxW mask of an animal rotated to horizontal
 
     Returns:
-    - length: maximum row occupancy in pixels
+        length: maximum row occupancy in pixels
     """
     return np.count_nonzero(mask, axis=1).max()
 
 
 def get_width(mask: np.ndarray) -> np.integer:
-    """
-    Finds the greatest number of foreground pixels in a column
+    """Finds the greatest number of foreground pixels in a column
 
-    Parameters:
-    - mask: HxW mask of an animal rotated to horizontal
+    Args:
+        mask: HxW mask of an animal rotated to horizontal
 
     Returns:
-    - width: maximum column occupancy in pixels
+        width: maximum column occupancy in pixels
     """
     return np.count_nonzero(mask, axis=0).max()
 
 
 def get_dorsal_area(mask: np.ndarray) -> int:
-    """
-    Counts foreground pixels in the dorsal silhouette
+    """Counts foreground pixels in the dorsal silhouette
 
-    Parameters:
-    - mask: HxW segmentation mask
+    Args:
+        mask: HxW segmentation mask
 
     Returns:
-    - dorsal_area: area in square pixels
+        dorsal_area: area in square pixels
     """
     return np.count_nonzero(mask)
 
 
 def get_volume(height_frame: np.ndarray) -> np.float64:
-    """
-    Sums masked heights after converting millimeters to centimeters
+    """Sums masked heights after converting millimeters to centimeters
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, zero outside the mask
+    Args:
+        height_frame: HxW height frame in millimeters, zero outside the mask
 
     Returns:
-    - volume: summed height in square pixels times centimeters
+        volume: summed height in square pixels times centimeters
     """
     return height_frame.sum(dtype=np.float64) / 10.0
 
 
 def get_max_height(height_frame: np.ndarray) -> np.floating:
-    """
-    Finds the maximum masked height
+    """Finds the maximum masked height
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, zero outside the mask
+    Args:
+        height_frame: HxW height frame in millimeters, zero outside the mask
 
     Returns:
-    - max_height: maximum height in centimeters
+        max_height: maximum height in centimeters
     """
     return height_frame.max() / 10.0
 
 
 def get_avg_height(volume: float, dorsal_area: int) -> float:
-    """
-    Calculates mean height over the dorsal silhouette
+    """Calculates mean height over the dorsal silhouette
 
-    Parameters:
-    - volume: summed height in square pixels times centimeters
-    - dorsal_area: positive foreground area in square pixels
+    Args:
+        volume: summed height in square pixels times centimeters
+        dorsal_area: positive foreground area in square pixels
 
     Returns:
-    - avg_height: average height in centimeters
+        avg_height: average height in centimeters
     """
     return volume / dorsal_area
 
 
 def get_z(fl: float, avg_height: float) -> float:
-    """
-    Calculates camera distance to the average animal height
+    """Calculates camera distance to the average animal height
 
-    Parameters:
-    - fl: camera height above the floor in millimeters
-    - avg_height: average animal height in centimeters
+    Args:
+        fl: camera height above the floor in millimeters
+        avg_height: average animal height in centimeters
 
     Returns:
-    - z: distance from camera to animal in millimeters
+        z: distance from camera to animal in millimeters
     """
     return fl - avg_height * 10.0
 
 
 def get_centroid(mask: np.ndarray) -> tuple[int, int]:
-    """
-    Finds the rounded centroid of the foreground pixels
+    """Finds the rounded centroid of the foreground pixels
 
-    Parameters:
-    - mask: HxW segmentation mask
+    Args:
+        mask: HxW segmentation mask
 
     Returns:
-    - centroid: (row, column) pixel coordinates
+        centroid: (row, column) pixel coordinates
     """
     rows, cols = np.nonzero(mask)
 
@@ -132,16 +123,15 @@ def get_centroid(mask: np.ndarray) -> tuple[int, int]:
 def get_centroid_height(
     height_frame: np.ndarray, centroid: tuple[int, int], radius: int = 50
 ) -> np.floating:
-    """
-    Finds the maximum height in a window around the centroid
+    """Finds the maximum height in a window around the centroid
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, zero outside the mask
-    - centroid: (row, column) pixel coordinates inside the frame
-    - radius: positive half-width of the window in pixels
+    Args:
+        height_frame: HxW height frame in millimeters, zero outside the mask
+        centroid: (row, column) pixel coordinates inside the frame
+        radius: positive half-width of the window in pixels
 
     Returns:
-    - centroid_height: maximum window height in centimeters
+        centroid_height: maximum window height in centimeters
     """
     height = height_frame
     row, col = centroid
@@ -154,16 +144,15 @@ def get_centroid_height(
 
 
 def get_circumference_min_tot(height_frame: np.ndarray, col: int, fl: float) -> float:
-    """
-    Sums rounded vertical segments exceeding the flat pixel length
+    """Sums rounded vertical segments exceeding the flat pixel length
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, zero outside the mask
-    - col: column index to measure
-    - fl: camera height above the floor in millimeters
+    Args:
+        height_frame: HxW height frame in millimeters, zero outside the mask
+        col: column index to measure
+        fl: camera height above the floor in millimeters
 
     Returns:
-    - circumference: calibrated contour length, or -1 for fewer than two heights
+        circumference: calibrated contour length, or -1 for fewer than two heights
     """
     height = height_frame.astype(np.float64, copy=False)
     values = height[:, col]
@@ -192,17 +181,16 @@ def get_circumference_min_tot(height_frame: np.ndarray, col: int, fl: float) -> 
 def get_comp_max_tot_vertical_max_column(
     height_frame: np.ndarray, mask: np.ndarray, fl: float
 ) -> tuple[float, np.integer | None]:
-    """
-    Measures circumference at the column containing the most valid heights
+    """Measures circumference at the column containing the most valid heights
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters
-    - mask: HxW segmentation mask aligned with the height frame
-    - fl: camera height above the floor in millimeters
+    Args:
+        height_frame: HxW height frame in millimeters
+        mask: HxW segmentation mask aligned with the height frame
+        fl: camera height above the floor in millimeters
 
     Returns:
-    - circumference: calibrated contour length, or -1 if unavailable
-    - col: first widest column index, or None if fewer than two valid heights
+        circumference: calibrated contour length, or -1 if unavailable
+        col: first widest column index, or None if fewer than two valid heights
     """
     height = height_frame
 
@@ -216,15 +204,14 @@ def get_comp_max_tot_vertical_max_column(
 
 
 def get_surface_area_matlab_exact(height_frame: np.ndarray, fl: float) -> np.float64:
-    """
-    Sums rounded triangle areas exceeding the notebook's flat-area threshold
+    """Sums rounded triangle areas exceeding the notebook's flat-area threshold
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, zero outside the mask
-    - fl: camera height above the floor in millimeters
+    Args:
+        height_frame: HxW height frame in millimeters, zero outside the mask
+        fl: camera height above the floor in millimeters
 
     Returns:
-    - surface_area: calibrated area using the notebook's triangle formula and rounding
+        surface_area: calibrated area using the notebook's triangle formula and rounding
     """
     height = height_frame.astype(np.float64, copy=False)
     origin = height[:-1, :-1]
@@ -259,16 +246,15 @@ def get_surface_area_matlab_exact(height_frame: np.ndarray, fl: float) -> np.flo
 def get_hip_heights(
     height_frame: np.ndarray, keypoints: np.ndarray
 ) -> tuple[np.floating, np.floating]:
-    """
-    Samples heights at hip keypoints 11 and 15
+    """Samples heights at hip keypoints 11 and 15
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, zero outside the mask
-    - keypoints: (N, 2) pixel coordinates in (x, y) order, aligned with the frame
+    Args:
+        height_frame: HxW height frame in millimeters, zero outside the mask
+        keypoints: (N, 2) pixel coordinates in (x, y) order, aligned with the frame
 
     Returns:
-    - top_hip_height: height at keypoint 11 in centimeters
-    - bottom_hip_height: height at keypoint 15 in centimeters
+        top_hip_height: height at keypoint 11 in centimeters
+        bottom_hip_height: height at keypoint 15 in centimeters
     """
     height = height_frame
     hips = np.round(keypoints[[10, 14], :2]).astype(int)
@@ -279,16 +265,15 @@ def get_hip_heights(
 def get_average_hip_height(
     top_hip_height: float, bottom_hip_height: float, avg_height: float
 ) -> float:
-    """
-    Averages hip heights that are positive and at least half the mean body height
+    """Averages hip heights that are positive and at least half the mean body height
 
-    Parameters:
-    - top_hip_height: top hip height in centimeters
-    - bottom_hip_height: bottom hip height in centimeters
-    - avg_height: average body height in centimeters
+    Args:
+        top_hip_height: top hip height in centimeters
+        bottom_hip_height: bottom hip height in centimeters
+        avg_height: average body height in centimeters
 
     Returns:
-    - average_hip_height: mean valid hip height in centimeters, or -1 if neither is valid
+        average_hip_height: mean valid hip height in centimeters, or -1 if neither is valid
     """
     valid = [
         height
@@ -300,15 +285,14 @@ def get_average_hip_height(
 
 
 def get_hip_width(height_frame: np.ndarray, keypoints: np.ndarray) -> np.integer | int:
-    """
-    Measures the positive-height span at the midpoint column of the hips
+    """Measures the positive-height span at the midpoint column of the hips
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, zero outside the mask
-    - keypoints: (N, 2) pixel coordinates in (x, y) order, aligned with the frame
+    Args:
+        height_frame: HxW height frame in millimeters, zero outside the mask
+        keypoints: (N, 2) pixel coordinates in (x, y) order, aligned with the frame
 
     Returns:
-    - hip_width: distance between outermost positive rows in pixels, or -1 if unavailable
+        hip_width: distance between outermost positive rows in pixels, or -1 if unavailable
     """
     height = height_frame
     hips = np.round(keypoints[[10, 14], :2]).astype(int)
@@ -321,20 +305,19 @@ def get_hip_width(height_frame: np.ndarray, keypoints: np.ndarray) -> np.integer
 def get_features(
     height_frame: np.ndarray, mask: np.ndarray, keypoints: np.ndarray, fl: float
 ) -> dict:
-    """
-    Extracts the 20 model inputs from aligned, postprocessed inputs
+    """Extracts the 20 model inputs from aligned, postprocessed inputs
 
-    Parameters:
-    - height_frame: HxW height frame in millimeters, rotated to horizontal
-    - mask: HxW segmentation mask rotated with the frame
-    - keypoints: (N, 2) (x, y) pixel coordinates rotated with the frame
-    - fl: camera height above the floor in millimeters
+    Args:
+        height_frame: HxW height frame in millimeters, rotated to horizontal
+        mask: HxW segmentation mask rotated with the frame
+        keypoints: (N, 2) (x, y) pixel coordinates rotated with the frame
+        fl: camera height above the floor in millimeters
 
     Returns:
-    - features: 10 original measurements followed by their 10 transformed counterparts
-      in model input order, using Z = FL - AvgHeight * 10 in millimeters;
-      suffixed names preserve the notebook's transformations, including scaling
-      heights already in centimeters; statistical normalization is not applied
+        features: 10 original measurements followed by their 10 transformed counterparts
+            in model input order, using Z = FL - AvgHeight * 10 in millimeters;
+            suffixed names preserve the notebook's transformations, including scaling
+            heights already in centimeters; statistical normalization is not applied
     """
     mask = mask.astype(bool)
     height = height_frame

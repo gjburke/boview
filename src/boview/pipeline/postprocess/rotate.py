@@ -6,14 +6,13 @@ from skimage.measure import regionprops
 
 
 def get_rotation_matrix(mask: np.ndarray[np.bool]) -> np.ndarray:
-    """
-    Returns the matrix to rotate an image's object back to horizontal
+    """Returns the matrix to rotate an image's object back to horizontal
 
-    Parameters:
-    - mask: the HxW boolean segmentation mask for that particular image
+    Args:
+        mask: the HxW boolean segmentation mask for that particular image
 
     Returns:
-    - rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
+        rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
     """
     binary = mask.astype(np.uint8)
     props = regionprops(binary)[0]
@@ -27,15 +26,14 @@ def get_rotation_matrix(mask: np.ndarray[np.bool]) -> np.ndarray:
 
 
 def rotate_frame(frame: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
-    """
-    Rotates a HxW frame, interpolating pixels when needed and keeping a hard edge
+    """Rotates a HxW frame, interpolating pixels when needed and keeping a hard edge
 
-    Parameters:
-    - frame: a HxW(x...) frame to rotate
-    - rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
+    Args:
+        frame: a HxW(x...) frame to rotate
+        rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
 
     Returns:
-    - frame_rotated: a HxW(x...) rotated frame
+        frame_rotated: a HxW(x...) rotated frame
     """
     frame_rotated = cv2.warpAffine(
         frame,
@@ -49,15 +47,14 @@ def rotate_frame(frame: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
 
 
 def rotate_points(points: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
-    """
-    Rotates a set of (N, 2) points in (x, y) format and rounds to nearest pixel
+    """Rotates a set of (N, 2) points in (x, y) format and rounds to nearest pixel
 
-    Parameters:
-    - points: an (N, 2) array of (x, y) points
-    - rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
+    Args:
+        points: an (N, 2) array of (x, y) points
+        rotation_matrix: a 2x3 array with a 2x2 rotation/scaling matrix and scaling column
 
     Returns:
-    - points_rotated: an (N, 2) array of rotated (x, y) points
+        points_rotated: an (N, 2) array of rotated (x, y) points
     """
     points_rotated = cv2.transform(
         points[:, :2].reshape(-1, 1, 2),
@@ -73,18 +70,17 @@ def rotate_horizontal(
     mask: np.ndarray[np.bool],
     points: np.ndarray,
 ) -> (np.ndarray, np.ndarray, np.ndarray):
-    """
-    Rotates the frame, points, and mask to horizontal
+    """Rotates the frame, points, and mask to horizontal
 
-    Parameters:
-    - frame: a HxW(x...) frame to rotate
-    - points: an (N, 2) array of (x, y) points
-    - mask: the HxW boolean segmentation mask for that particular image
+    Args:
+        frame: a HxW(x...) frame to rotate
+        points: an (N, 2) array of (x, y) points
+        mask: the HxW boolean segmentation mask for that particular image
 
     Returns:
-    - frame_rotated: HxW input frame rotated to horizontal
-    - mask_rotated: HxW mask rotated to horizontal
-    - points_rotated: (N, 2) (x, y) points rotated to horizonal
+        frame_rotated: HxW input frame rotated to horizontal
+        mask_rotated: HxW mask rotated to horizontal
+        points_rotated: (N, 2) (x, y) points rotated to horizonal
     """
     rotation_matrix = get_rotation_matrix(mask=mask)
 

@@ -6,15 +6,14 @@ import numpy as np
 def depth_to_height(
     depth_frame: np.ndarray[np.uint16], camera_height: int
 ) -> np.ndarray[np.uint16]:
-    """
-    Converts depth frame values to height based on given camera height, persisting zero-valued depths
+    """Converts depth frame values to height based on given camera height, persisting zero-valued depths
 
-    Parameters:
-    - depth_frame: HxW frame of depth values (usually in millimeters)
-    - camera_height: height from the ground to the capturing camera (usually in millimeters, same unit as depth camera)
+    Args:
+        depth_frame: HxW frame of depth values (usually in millimeters)
+        camera_height: height from the ground to the capturing camera (usually in millimeters, same unit as depth camera)
 
     Returns:
-    - height_frame: HxW frame of height values (usually in millimeters)
+        height_frame: HxW frame of height values (usually in millimeters)
 
     """
 
@@ -30,14 +29,13 @@ def depth_to_height(
 
 
 def normalize_height(height_frame: np.ndarray[np.uint16]) -> np.ndarray[np.uint8]:
-    """
-    Normalizes a height measurement frame to relative gray pixel values, for model input
+    """Normalizes a height measurement frame to relative gray pixel values, for model input
 
-    Parameters:
-    - height_frame: HxW frame of height values (uaully in millimeters)
+    Args:
+        height_frame: HxW frame of height values (uaully in millimeters)
 
     Returns:
-    - normalized_height_frame: HxWx3 frame of grayscale color values (0-255)
+        normalized_height_frame: HxWx3 frame of grayscale color values (0-255)
     """
 
     shifted_height = height_frame - height_frame.min()

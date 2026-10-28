@@ -11,15 +11,14 @@ from .utils import mask_frame
 
 
 def postprocess_frame(frame: PipelineFrame) -> PipelineFrame:
-    """
-    Combines masks and cleans height without changing the input
+    """Combines masks and cleans height without changing the input
 
-    Parameters:
-    - frame: pending filtered frame with original masks and raw height
+    Args:
+        frame: pending filtered frame with original masks and raw height
 
     Returns:
-    - processed: new frame with cleaned millimeter height and refined height mask
-      in original coordinates, or rejected if no usable silhouette remains
+        processed: new frame with cleaned millimeter height and refined height mask
+            in original coordinates, or rejected if no usable silhouette remains
     """
     require_stage(frame, "filter")
 
@@ -48,15 +47,14 @@ def postprocess_frame(frame: PipelineFrame) -> PipelineFrame:
 
 
 def align_frame(frame: PipelineFrame) -> PipelineFrame:
-    """
-    Rotates cleaned images and keypoints together without changing the input
+    """Rotates cleaned images and keypoints together without changing the input
 
-    Parameters:
-    - frame: pending keypoint frame with cleaned images and original keypoints
+    Args:
+        frame: pending keypoint frame with cleaned images and original keypoints
 
     Returns:
-    - aligned: new frame with rotated RGB, millimeter height, boolean mask,
-      and Kx2 (x, y) keypoints; rejects an empty mask or out-of-bounds hips
+        aligned: new frame with rotated RGB, millimeter height, boolean mask,
+            and Kx2 (x, y) keypoints; rejects an empty mask or out-of-bounds hips
     """
     require_stage(frame, "keypoint")
 

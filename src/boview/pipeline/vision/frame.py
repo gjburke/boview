@@ -13,16 +13,15 @@ from .segment import mask_from_result, segment_color_image, segment_height_image
 
 
 def segment_frame(frame: PipelineFrame, model: YOLO) -> PipelineFrame:
-    """
-    Segments the original color and height images without changing the input
+    """Segments the original color and height images without changing the input
 
-    Parameters:
-    - frame: pending preprocessed frame with RGB color and raw height in millimeters
-    - model: loaded segmentation model used for both images
+    Args:
+        frame: pending preprocessed frame with RGB color and raw height in millimeters
+        model: loaded segmentation model used for both images
 
     Returns:
-    - segmented: new frame with original-coordinate boolean masks, or a rejected
-      frame if either image does not contain exactly one nonempty segmentation
+        segmented: new frame with original-coordinate boolean masks, or a rejected
+            frame if either image does not contain exactly one nonempty segmentation
     """
     require_stage(frame, "preprocess")
 
@@ -52,16 +51,15 @@ def segment_frame(frame: PipelineFrame, model: YOLO) -> PipelineFrame:
 
 
 def keypoint_frame(frame: PipelineFrame, model: YOLO) -> PipelineFrame:
-    """
-    Detects keypoints after mask cleanup without changing the input
+    """Detects keypoints after mask cleanup without changing the input
 
-    Parameters:
-    - frame: pending postprocessed frame with RGB color and a refined height mask
-    - model: loaded pose model with hip keypoints at indices 10 and 14
+    Args:
+        frame: pending postprocessed frame with RGB color and a refined height mask
+        model: loaded pose model with hip keypoints at indices 10 and 14
 
     Returns:
-    - detected: new frame with original-coordinate Kx2 (x, y) keypoints,
-      or a rejected frame for missing, ambiguous, or unusable keypoints
+        detected: new frame with original-coordinate Kx2 (x, y) keypoints,
+            or a rejected frame for missing, ambiguous, or unusable keypoints
     """
     require_stage(frame, "postprocess")
 

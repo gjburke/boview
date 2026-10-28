@@ -5,14 +5,13 @@ import numpy as np
 
 
 def clean_mask(mask: np.ndarray[np.bool]) -> np.ndarray[np.bool]:
-    """
-    Cleans model output's mask, filling holes, isolating the main mask, and smoothing jagged edges
+    """Cleans model output's mask, filling holes, isolating the main mask, and smoothing jagged edges
 
-    Parameters:
-    - mask: a HxW boolean array that has 'True's on pixels that should be kept
+    Args:
+        mask: a HxW boolean array that has 'True's on pixels that should be kept
 
     Returns:
-    - cleaned_mask: a HxW boolean array filled and smoothed from original mask
+        cleaned_mask: a HxW boolean array filled and smoothed from original mask
     """
     working_mask = 255 * mask.astype(np.uint8)
 
@@ -47,17 +46,16 @@ def clean_mask(mask: np.ndarray[np.bool]) -> np.ndarray[np.bool]:
 def interpolate_height(
     frame: np.ndarray, mask: np.ndarray[np.bool]
 ) -> (np.ndarray, np.ndarray[np.bool]):
-    """
-    Interpolates missing height inside a validated mask, trims statistical
+    """Interpolates missing height inside a validated mask, trims statistical
     outliers from the mask (leaving the image untouched), smooths the final
     silhouette, and returns the full image and final mask
 
-    Parameters:
-    - frame: a HxW array of height values
-    - mask: a HxW boolean array that has 'True's on pixels that should be kept
+    Args:
+        frame: a HxW array of height values
+        mask: a HxW boolean array that has 'True's on pixels that should be kept
 
     Returns:
-    - cleaned_mask: a HxW boolean array filled and smoothed from original mask
+        cleaned_mask: a HxW boolean array filled and smoothed from original mask
     """
     working_frame = frame.copy().astype(np.uint16)
     working_mask = 255 * mask.astype(np.uint8)

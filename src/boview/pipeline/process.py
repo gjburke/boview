@@ -22,26 +22,25 @@ def process_frame(
     min_iou: float = 0.90,
     max_percentage_zero: float = 2.0,
 ) -> PipelineFrame:
-    """
-    Processes one aligned color/depth pair using already-loaded models
+    """Processes one aligned color/depth pair using already-loaded models
 
-    Parameters:
-    - color_frame: HxWx3 uint8 RGB image, aligned with the depth frame
-    - depth_frame: HxW nonnegative depth values in millimeters, zero where missing
-    - camera_height: positive camera height above the floor in millimeters
-    - segmentation_model: model used for both color and height segmentation
-    - keypoint_model: pose model with hip keypoints at indices 10 and 14
-    - weight_model: fitted pipeline using the same conversions as get_features
-    - min_iou: minimum accepted mask overlap, between 0 and 1
-    - max_percentage_zero: maximum accepted missing-height percentage, from 0 to 100
+    Args:
+        color_frame: HxWx3 uint8 RGB image, aligned with the depth frame
+        depth_frame: HxW nonnegative depth values in millimeters, zero where missing
+        camera_height: positive camera height above the floor in millimeters
+        segmentation_model: model used for both color and height segmentation
+        keypoint_model: pose model with hip keypoints at indices 10 and 14
+        weight_model: fitted pipeline using the same conversions as get_features
+        min_iou: minimum accepted mask overlap, between 0 and 1
+        max_percentage_zero: maximum accepted missing-height percentage, from 0 to 100
 
     Returns:
-    - result: new frame with prediction and visualization arrays on success, or
-      rejection status, reason, and intermediate outputs when a stage rejects it
+        result: new frame with prediction and visualization arrays on success, or
+            rejection status, reason, and intermediate outputs when a stage rejects it
 
     Raises:
-    - ValueError: invalid frame shapes, values, or thresholds; unexpected model
-      and processing errors propagate to the caller
+        ValueError: invalid frame shapes, values, or thresholds; unexpected model
+            and processing errors propagate to the caller
     """
     frame = preprocess_frame(color_frame, depth_frame, camera_height)
     if frame.status == "rejected":

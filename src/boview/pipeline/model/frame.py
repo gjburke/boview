@@ -11,16 +11,15 @@ from .predictor import predict_weight
 
 
 def model_frame(frame: PipelineFrame, model: Pipeline) -> PipelineFrame:
-    """
-    Extracts model inputs and predicts bodyweight without changing the input
+    """Extracts model inputs and predicts bodyweight without changing the input
 
-    Parameters:
-    - frame: pending aligned frame with rotated height, mask, and keypoints
-    - model: fitted weight pipeline using the same conversions as get_features
+    Args:
+        frame: pending aligned frame with rotated height, mask, and keypoints
+        model: fitted weight pipeline using the same conversions as get_features
 
     Returns:
-    - predicted: accepted new frame with 20 unscaled features and weight, or
-      rejected frame for invalid measurements or nonfinite predictions
+        predicted: accepted new frame with 20 unscaled features and weight, or
+            rejected frame for invalid measurements or nonfinite predictions
     """
     require_stage(frame, "align")
 

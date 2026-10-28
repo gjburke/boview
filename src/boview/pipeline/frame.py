@@ -8,20 +8,23 @@ import numpy as np
 
 @dataclass(frozen=True)
 class PipelineFrame:
-    """
-    Stores the current images, masks, keypoints, and prediction
+    """Stores the current images, masks, keypoints, and prediction
 
     Attributes:
-    - color_frame: HxWx3 uint8 RGB image, rotated during alignment
-    - height_frame: aligned HxW height image in millimeters
-    - camera_height: camera height above the floor in millimeters
-    - color_mask: current HxW boolean color segmentation mask
-    - height_mask: current HxW boolean height mask; after cleanup this is the
-      refined union of both segmentations used for measurements and keypoints
-    - keypoints: current Kx2 (x, y) pixel coordinates
-    - mask_iou, percentage_zero: quality measurements taken before cleanup
-    - features, weight: 20 unscaled model inputs and prediction in training units
-    - stage, status, rejection_reason: processing progress and rejection details
+        color_frame: HxWx3 uint8 RGB image, rotated during alignment
+        height_frame: aligned HxW height image in millimeters
+        camera_height: camera height above the floor in millimeters
+        color_mask: current HxW boolean color segmentation mask
+        height_mask: current HxW boolean height mask; after cleanup this is the
+            refined union of both segmentations used for measurements and keypoints
+        keypoints: current Kx2 (x, y) pixel coordinates
+        mask_iou: quality measurements taken before cleanup
+        percentage_zero: quality measurements taken before cleanup
+        features: 20 unscaled model inputs and prediction in training units
+        weight: 20 unscaled model inputs and prediction in training units
+        stage: processing progress and rejection details
+        status: processing progress and rejection details
+        rejection_reason: processing progress and rejection details
 
     Stages replace current values in a new object without modifying input arrays.
     Unchanged arrays are shared and should be treated as read-only. Keep an earlier
@@ -48,15 +51,14 @@ class PipelineFrame:
 
 
 def require_stage(frame: PipelineFrame, stage: str) -> None:
-    """
-    Checks that a pending frame is ready for the next processing stage
+    """Checks that a pending frame is ready for the next processing stage
 
-    Parameters:
-    - frame: input frame, unchanged by this check
-    - stage: required last completed stage
+    Args:
+        frame: input frame, unchanged by this check
+        stage: required last completed stage
 
     Raises:
-    - ValueError: the frame has already finished or its stages are out of order
+        ValueError: the frame has already finished or its stages are out of order
     """
     if frame.status != "pending" or frame.stage != stage:
         raise ValueError(
@@ -65,15 +67,14 @@ def require_stage(frame: PipelineFrame, stage: str) -> None:
 
 
 def reject_frame(frame: PipelineFrame, stage: str, reason: str) -> PipelineFrame:
-    """
-    Returns a rejected copy while preserving the available intermediate results
+    """Returns a rejected copy while preserving the available intermediate results
 
-    Parameters:
-    - frame: input frame, unchanged by rejection
-    - stage: stage that rejected the frame
-    - reason: explanation of why the frame could not continue
+    Args:
+        frame: input frame, unchanged by rejection
+        stage: stage that rejected the frame
+        reason: explanation of why the frame could not continue
 
     Returns:
-    - rejected: new frame with rejection status and reason
+        rejected: new frame with rejection status and reason
     """
     return replace(frame, stage=stage, status="rejected", rejection_reason=reason)

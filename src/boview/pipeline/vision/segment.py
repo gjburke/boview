@@ -7,14 +7,13 @@ from ultralytics.engine.results import Results
 
 
 def load_segmentation_model(path: str) -> YOLO:
-    """
-    Loads a segmentation model from a given path
+    """Loads a segmentation model from a given path
 
-    Parameters:
-    - path: a path to an Ultralytics YOLO11 segmentation checkpoint
+    Args:
+        path: a path to an Ultralytics YOLO11 segmentation checkpoint
 
     Returns:
-    - model: loaded segmentation model
+        model: loaded segmentation model
     """
     model = YOLO(path)
 
@@ -25,15 +24,14 @@ def load_segmentation_model(path: str) -> YOLO:
 
 
 def segment_color_image(model: YOLO, image: np.ndarray) -> Results:
-    """
-    Segments a color image
+    """Segments a color image
 
-    Parameters:
-    - model: loaded Ultralytics YOLO11 segmentation model
-    - image: a HxWx3 color image
+    Args:
+        model: loaded Ultralytics YOLO11 segmentation model
+        image: a HxWx3 color image
 
     Returns:
-    - result: segmentation prediction for the image
+        result: segmentation prediction for the image
     """
     result = model.predict(image)[0]
 
@@ -44,14 +42,13 @@ def segment_color_image(model: YOLO, image: np.ndarray) -> Results:
 
 
 def preprocess_height(height: np.ndarray) -> np.ndarray:
-    """
-    Clips and scales a height frame to a three-channel image
+    """Clips and scales a height frame to a three-channel image
 
-    Parameters:
-    - height: a HxW height frame with a nonzero range after clipping
+    Args:
+        height: a HxW height frame with a nonzero range after clipping
 
     Returns:
-    - rgb: a HxWx3 uint8 image with matching grayscale channels
+        rgb: a HxWx3 uint8 image with matching grayscale channels
     """
     clipped = np.clip(height, a_min=0, a_max=height.max() + 1)
     normalized = (clipped / (clipped.max() - clipped.min())) * 255
@@ -61,15 +58,14 @@ def preprocess_height(height: np.ndarray) -> np.ndarray:
 
 
 def segment_height_image(model: YOLO, image: np.ndarray) -> Results:
-    """
-    Preprocesses and segments a height image
+    """Preprocesses and segments a height image
 
-    Parameters:
-    - model: loaded Ultralytics YOLO11 segmentation model
-    - image: a HxW height frame with a nonzero range after clipping
+    Args:
+        model: loaded Ultralytics YOLO11 segmentation model
+        image: a HxW height frame with a nonzero range after clipping
 
     Returns:
-    - result: segmentation prediction for the preprocessed image
+        result: segmentation prediction for the preprocessed image
     """
     image = preprocess_height(image)
     result = model.predict(image)[0]
@@ -81,15 +77,14 @@ def segment_height_image(model: YOLO, image: np.ndarray) -> Results:
 
 
 def mask_from_result(result: Results | None) -> np.ndarray | None:
-    """
-    Extracts the first segmentation mask and resizes it to the original image
+    """Extracts the first segmentation mask and resizes it to the original image
 
-    Parameters:
-    - result: segmentation prediction for an image, or None
+    Args:
+        result: segmentation prediction for an image, or None
 
     Returns:
-    - mask: a HxW boolean array matching the original image dimensions,
-      or None if the result or its masks are unavailable
+        mask: a HxW boolean array matching the original image dimensions,
+            or None if the result or its masks are unavailable
     """
     if result is None or result.masks is None or len(result.masks.data) == 0:
         return None

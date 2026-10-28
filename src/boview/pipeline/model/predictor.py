@@ -6,15 +6,14 @@ from sklearn.pipeline import Pipeline
 
 
 def load_weight_model(path: str) -> Pipeline:
-    """
-    Loads a fitted weight prediction pipeline from a given path
+    """Loads a fitted weight prediction pipeline from a given path
 
-    Parameters:
-    - path: a path to a trusted joblib file containing the fitted scaler,
-      feature selector, and regression model
+    Args:
+        path: a path to a trusted joblib file containing the fitted scaler,
+            feature selector, and regression model
 
     Returns:
-    - model: loaded weight prediction pipeline
+        model: loaded weight prediction pipeline
     """
     model = joblib.load(path)
 
@@ -22,16 +21,15 @@ def load_weight_model(path: str) -> Pipeline:
 
 
 def predict_weight(model: Pipeline, features: dict) -> float:
-    """
-    Predicts bodyweight from one frame's extracted measurements
+    """Predicts bodyweight from one frame's extracted measurements
 
-    Parameters:
-    - model: fitted pipeline trained with named DataFrame columns and the same
-      feature conversions used by get_features
-    - features: dictionary of unscaled measurements returned by get_features
+    Args:
+        model: fitted pipeline trained with named DataFrame columns and the same
+            feature conversions used by get_features
+        features: dictionary of unscaled measurements returned by get_features
 
     Returns:
-    - weight: predicted bodyweight in the training target's units
+        weight: predicted bodyweight in the training target's units
     """
     # Arrange measurements in the saved training column order
     frame = pd.DataFrame([features])
